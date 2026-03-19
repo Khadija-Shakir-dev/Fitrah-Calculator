@@ -1,0 +1,810 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Fitrah Calculator – Zakat al-Fitr</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    /* ── Tokens ─────────────────────────────────────── */
+    :root {
+      --cream:    #faf6ef;
+      --cream-2:  #f3ece0;
+      --sand:     #e8dcc8;
+      --gold:     #c9973a;
+      --gold-lt:  #e8b95a;
+      --teal:     #2d6a60;
+      --teal-lt:  #3d8a7e;
+      --teal-dim: #1e4d45;
+      --text:     #2c2416;
+      --text-2:   #6b5c42;
+      --text-3:   #9e8c72;
+      --white:    #ffffff;
+      --error:    #c0392b;
+      --shadow:   0 8px 40px rgba(44,36,22,0.13), 0 2px 8px rgba(44,36,22,0.07);
+      --radius:   20px;
+      --transition: 0.28s cubic-bezier(.4,0,.2,1);
+    }
+
+    /* ── Base ───────────────────────────────────────── */
+    html { scroll-behavior: smooth; }
+
+    body {
+      font-family: 'DM Sans', sans-serif;
+      background-color: var(--cream);
+      background-image:
+        radial-gradient(ellipse 80% 60% at 50% -10%, rgba(201,151,58,.18) 0%, transparent 70%),
+        radial-gradient(ellipse 60% 50% at 90% 90%, rgba(45,106,96,.12) 0%, transparent 60%);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      padding: 40px 16px 60px;
+      color: var(--text);
+    }
+
+    /* ── Geometric pattern strip ────────────────────── */
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background-image:
+        repeating-linear-gradient(45deg, transparent, transparent 28px, rgba(201,151,58,.04) 28px, rgba(201,151,58,.04) 30px),
+        repeating-linear-gradient(-45deg, transparent, transparent 28px, rgba(45,106,96,.04) 28px, rgba(45,106,96,.04) 30px);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    /* ── Page wrapper ───────────────────────────────── */
+    .page-wrapper {
+      position: relative;
+      z-index: 1;
+      width: 100%;
+      max-width: 560px;
+      animation: fadeUp .7s ease both;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(28px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+
+    /* ── Header badge ───────────────────────────────── */
+    .header-badge {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      margin-bottom: 22px;
+      animation: fadeUp .7s .1s ease both;
+    }
+
+    .badge-icon {
+      width: 44px; height: 44px;
+      background: linear-gradient(135deg, var(--teal), var(--teal-lt));
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 14px rgba(45,106,96,.35);
+    }
+
+    .badge-icon svg { width: 22px; height: 22px; fill: var(--white); }
+
+    .badge-text {
+      font-family: 'Playfair Display', serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2.5px;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    /* ── Card ───────────────────────────────────────── */
+    .card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      animation: fadeUp .7s .2s ease both;
+    }
+
+    /* Card top band */
+    .card-band {
+      background: linear-gradient(135deg, var(--teal-dim) 0%, var(--teal) 55%, var(--teal-lt) 100%);
+      padding: 32px 36px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .card-band::after {
+      content: '';
+      position: absolute;
+      right: -40px; top: -40px;
+      width: 200px; height: 200px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.1);
+    }
+    .card-band::before {
+      content: '';
+      position: absolute;
+      right: 20px; bottom: -60px;
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      border: 2px solid rgba(255,255,255,.07);
+    }
+
+    .card-band h1 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(26px, 5vw, 32px);
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1.2;
+      position: relative;
+    }
+
+    .card-band h1 span {
+      color: var(--gold-lt);
+    }
+
+    .card-band p {
+      margin-top: 8px;
+      font-size: 14px;
+      color: rgba(255,255,255,.72);
+      font-weight: 300;
+      line-height: 1.6;
+      position: relative;
+    }
+
+    .hijri-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: rgba(255,255,255,.12);
+      border: 1px solid rgba(255,255,255,.18);
+      border-radius: 30px;
+      padding: 4px 12px;
+      font-size: 12px;
+      color: rgba(255,255,255,.85);
+      font-weight: 500;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    /* Card body */
+    .card-body { padding: 32px 36px 36px; }
+
+    /* ── Form Fields ─────────────────────────────────── */
+    .field { margin-bottom: 20px; }
+
+    label {
+      display: block;
+      font-size: 12.5px;
+      font-weight: 600;
+      letter-spacing: .8px;
+      text-transform: uppercase;
+      color: var(--text-2);
+      margin-bottom: 8px;
+    }
+
+    .input-wrap {
+      position: relative;
+    }
+
+    .input-wrap .icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--text-3);
+      pointer-events: none;
+      display: flex;
+    }
+
+    .input-wrap .icon svg {
+      width: 17px; height: 17px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 1.8;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    select, input[type="number"] {
+      width: 100%;
+      padding: 13px 14px 13px 42px;
+      border: 1.5px solid var(--sand);
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--cream);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+      transition: border-color var(--transition), box-shadow var(--transition), background var(--transition);
+    }
+
+    select { cursor: pointer; }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+    select:hover, input[type="number"]:hover {
+      border-color: var(--gold);
+      background: var(--white);
+    }
+
+    select:focus, input[type="number"]:focus {
+      border-color: var(--teal);
+      background: var(--white);
+      box-shadow: 0 0 0 3.5px rgba(45,106,96,.12);
+    }
+
+    /* Custom select caret */
+    .select-wrap::after {
+      content: '';
+      position: absolute;
+      right: 15px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 8px; height: 8px;
+      border-right: 2px solid var(--text-3);
+      border-bottom: 2px solid var(--text-3);
+      transform: translateY(-65%) rotate(45deg);
+      pointer-events: none;
+    }
+
+    /* ── Error message ───────────────────────────────── */
+    .error-msg {
+      display: none;
+      align-items: center;
+      gap: 7px;
+      background: #fdf2f2;
+      border: 1.5px solid #f5c6c6;
+      border-radius: 10px;
+      padding: 11px 14px;
+      font-size: 13.5px;
+      color: var(--error);
+      font-weight: 500;
+      margin-bottom: 18px;
+      animation: shake .35s ease;
+    }
+
+    .error-msg.visible { display: flex; }
+
+    .error-msg svg {
+      width: 16px; height: 16px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      flex-shrink: 0;
+    }
+
+    @keyframes shake {
+      0%,100% { transform: translateX(0); }
+      20%      { transform: translateX(-5px); }
+      60%      { transform: translateX(5px); }
+    }
+
+    /* ── Button ──────────────────────────────────────── */
+    #calculate {
+      width: 100%;
+      padding: 15px;
+      background: linear-gradient(135deg, var(--teal-dim), var(--teal));
+      color: var(--white);
+      border: none;
+      border-radius: 12px;
+      font-family: 'DM Sans', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      letter-spacing: .4px;
+      cursor: pointer;
+      transition: transform var(--transition), box-shadow var(--transition), background var(--transition);
+      box-shadow: 0 4px 18px rgba(45,106,96,.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 9px;
+    }
+
+    #calculate svg {
+      width: 18px; height: 18px;
+      stroke: currentColor;
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    #calculate:hover {
+      background: linear-gradient(135deg, var(--teal), var(--teal-lt));
+      transform: translateY(-2px);
+      box-shadow: 0 8px 26px rgba(45,106,96,.4);
+    }
+
+    #calculate:active {
+      transform: translateY(0px);
+      box-shadow: 0 3px 12px rgba(45,106,96,.3);
+    }
+
+    #calculate:focus-visible {
+      outline: 3px solid var(--gold);
+      outline-offset: 3px;
+    }
+
+    /* ── Result box ──────────────────────────────────── */
+    .result-box {
+      display: none;
+      margin-top: 22px;
+      background: linear-gradient(135deg, #faf7ef, #f5edda);
+      border: 1.5px solid var(--sand);
+      border-radius: 16px;
+      padding: 24px;
+      position: relative;
+      overflow: hidden;
+      animation: popIn .4s cubic-bezier(.34,1.56,.64,1) both;
+    }
+
+    .result-box.visible { display: block; }
+
+    @keyframes popIn {
+      from { opacity: 0; transform: scale(.94); }
+      to   { opacity: 1; transform: scale(1); }
+    }
+
+    .result-box::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 5px; height: 100%;
+      background: linear-gradient(to bottom, var(--gold), var(--gold-lt));
+      border-radius: 4px 0 0 4px;
+    }
+
+    .result-label {
+      font-size: 11.5px;
+      font-weight: 600;
+      letter-spacing: 1.2px;
+      text-transform: uppercase;
+      color: var(--text-3);
+      margin-bottom: 6px;
+    }
+
+    .result-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .result-members {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+    }
+
+    .result-members .val {
+      font-family: 'Playfair Display', serif;
+      font-size: 22px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .result-members .sub {
+      font-size: 12px;
+      color: var(--text-3);
+      font-weight: 400;
+      margin-top: 1px;
+    }
+
+    .result-amount-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+    }
+
+    .result-amount {
+      font-family: 'Playfair Display', serif;
+      font-size: 32px;
+      font-weight: 700;
+      color: var(--teal-dim);
+      line-height: 1;
+    }
+
+    .result-currency {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--gold);
+      text-align: right;
+      margin-top: 3px;
+    }
+
+    .result-divider {
+      height: 1px;
+      background: var(--sand);
+      margin: 16px 0;
+    }
+
+    .result-note {
+      font-size: 12.5px;
+      color: var(--text-3);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-note span.dot {
+      width: 6px; height: 6px;
+      border-radius: 50%;
+      background: var(--gold);
+      flex-shrink: 0;
+      display: inline-block;
+    }
+
+    /* ── Info section ────────────────────────────────── */
+    .info-card {
+      background: var(--white);
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      margin-top: 20px;
+      overflow: hidden;
+      animation: fadeUp .7s .35s ease both;
+    }
+
+    .info-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 20px 28px;
+      cursor: pointer;
+      user-select: none;
+      gap: 12px;
+      transition: background var(--transition);
+    }
+
+    .info-header:hover { background: var(--cream); }
+
+    .info-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .info-icon {
+      width: 38px; height: 38px;
+      background: linear-gradient(135deg, rgba(201,151,58,.15), rgba(201,151,58,.08));
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .info-icon svg {
+      width: 18px; height: 18px;
+      stroke: var(--gold);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .info-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    .info-sub {
+      font-size: 12px;
+      color: var(--text-3);
+      margin-top: 1px;
+    }
+
+    .chevron {
+      width: 20px; height: 20px;
+      stroke: var(--text-3);
+      fill: none;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      transition: transform var(--transition);
+      flex-shrink: 0;
+    }
+
+    .info-card.open .chevron { transform: rotate(180deg); }
+
+    .info-body {
+      display: none;
+      padding: 0 28px 26px;
+      animation: fadeUp .3s ease both;
+    }
+
+    .info-card.open .info-body { display: block; }
+
+    .info-block {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--cream-2);
+    }
+
+    .info-block:last-child { border-bottom: none; padding-bottom: 0; }
+
+    .info-block-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--teal);
+      margin-bottom: 8px;
+    }
+
+    .info-block-title .dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--gold);
+    }
+
+    .info-block p, .info-block ul {
+      font-size: 13.5px;
+      color: var(--text-2);
+      line-height: 1.75;
+    }
+
+    .info-block ul {
+      padding-left: 18px;
+    }
+
+    .info-block ul li { margin-bottom: 4px; }
+
+    /* ── Footer ──────────────────────────────────────── */
+    footer {
+      margin-top: 28px;
+      text-align: center;
+      font-size: 12px;
+      color: var(--text-3);
+      animation: fadeUp .7s .45s ease both;
+    }
+
+    footer span { color: var(--gold); }
+
+    /* ── Responsive ──────────────────────────────────── */
+    @media (max-width: 480px) {
+      body { padding: 24px 12px 48px; }
+      .card-band { padding: 26px 22px 22px; }
+      .card-body { padding: 24px 22px 28px; }
+      .info-header { padding: 18px 20px; }
+      .info-body { padding: 0 20px 22px; }
+      .result-amount { font-size: 28px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="page-wrapper">
+
+    <!-- Header badge -->
+    <div class="header-badge">
+      <div class="badge-icon">
+        <!-- Crescent moon SVG -->
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
+        </svg>
+      </div>
+      <span class="badge-text">Ramadan 1446 AH</span>
+    </div>
+
+    <!-- Main calculator card -->
+    <div class="card">
+      <div class="card-band">
+        <div class="hijri-chip">
+          <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/>
+          </svg>
+          Pay before Eid prayer
+        </div>
+        <h1>Fitrah <span>Calculator</span></h1>
+        <p>Calculate your Zakat al-Fitr instantly for your family across 22 countries.</p>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Country select -->
+        <div class="field">
+          <label for="countrySelect">Country</label>
+          <div class="input-wrap select-wrap">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+            </span>
+            <select name="country" id="countrySelect">
+              <option value="Pakistan">🇵🇰 Pakistan</option>
+              <option value="USA">🇺🇸 USA</option>
+              <option value="UK">🇬🇧 UK</option>
+              <option value="Canada">🇨🇦 Canada</option>
+              <option value="Australia">🇦🇺 Australia</option>
+              <option value="UAE">🇦🇪 UAE</option>
+              <option value="Saudi Arabia">🇸🇦 Saudi Arabia</option>
+              <option value="Kuwait">🇰🇼 Kuwait</option>
+              <option value="Qatar">🇶🇦 Qatar</option>
+              <option value="Bahrain">🇧🇭 Bahrain</option>
+              <option value="Oman">🇴🇲 Oman</option>
+              <option value="Egypt">🇪🇬 Egypt</option>
+              <option value="Jordan">🇯🇴 Jordan</option>
+              <option value="France">🇫🇷 France</option>
+              <option value="Germany">🇩🇪 Germany</option>
+              <option value="Turkey">🇹🇷 Turkey</option>
+              <option value="Indonesia">🇮🇩 Indonesia</option>
+              <option value="India">🇮🇳 India</option>
+              <option value="Bangladesh">🇧🇩 Bangladesh</option>
+              <option value="Morocco">🇲🇦 Morocco</option>
+              <option value="Tunisia">🇹🇳 Tunisia</option>
+              <option value="Sudan">🇸🇩 Sudan</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- Members input -->
+        <div class="field">
+          <label for="members">Number of Family Members</label>
+          <div class="input-wrap">
+            <span class="icon">
+              <svg viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+            </span>
+            <input type="number" id="members" placeholder="e.g. 4" min="1">
+          </div>
+        </div>
+
+        <!-- Error message -->
+        <div class="error-msg" id="errorMsg">
+          <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          Please select a country and enter the number of family members.
+        </div>
+
+        <!-- Calculate button -->
+        <button id="calculate">
+          <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
+          Calculate Fitrah
+        </button>
+
+        <!-- Result display -->
+        <div class="result-box" id="output">
+          <div class="result-label">Your Fitrah Due</div>
+          <div class="result-row">
+            <div class="result-members">
+              <div class="val" id="res-members">—</div>
+              <div class="sub">family members</div>
+            </div>
+            <div class="result-amount-wrap">
+              <div class="result-amount" id="res-amount">—</div>
+              <div class="result-currency" id="res-currency"></div>
+            </div>
+          </div>
+          <div class="result-divider"></div>
+          <div class="result-note">
+            <span class="dot"></span>
+            Pay before the Eid-ul-Fitr prayer for it to be accepted as Fitrah.
+          </div>
+        </div>
+
+      </div><!-- /.card-body -->
+    </div><!-- /.card -->
+
+    <!-- Info accordion card -->
+    <div class="info-card" id="infoCard">
+      <div class="info-header" id="infoToggle">
+        <div class="info-header-left">
+          <div class="info-icon">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+          </div>
+          <div>
+            <div class="info-title">What is Zakat al-Fitr?</div>
+            <div class="info-sub">Tap to learn more</div>
+          </div>
+        </div>
+        <svg class="chevron" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+      </div>
+
+      <div class="info-body">
+        <div class="info-block">
+          <div class="info-block-title"><span class="dot"></span>Definition</div>
+          <p>Fitrah (Zakat al-Fitr) is a mandatory charity given by Muslims at the end of Ramadan, before the Eid-ul-Fitr prayer. It is required for every Muslim who has the means, paid on behalf of each family member including children.</p>
+        </div>
+
+        <div id="content" class="info-block">
+          <div class="info-block-title"><span class="dot"></span>Why is Fitrah Important?</div>
+          <ul>
+            <li>Purifies the fast from any mistakes or shortcomings during Ramadan.</li>
+            <li>Ensures poor and needy people can celebrate Eid with happiness.</li>
+            <li>Promotes equality and compassion within society.</li>
+            <li>A way of showing gratitude to Allah for completing Ramadan.</li>
+          </ul>
+
+          <div class="info-block-title" style="margin-top:14px"><span class="dot"></span>Who Should Pay?</div>
+          <p>Every Muslim with enough food or savings beyond basic needs must pay. The head of the family usually pays for all dependents.</p>
+
+          <div class="info-block-title" style="margin-top:14px"><span class="dot"></span>When to Pay?</div>
+          <p>Pay before the Eid prayer — ideally during the last days of Ramadan so it reaches those in need on time.</p>
+
+          <div class="info-block-title" style="margin-top:14px"><span class="dot"></span>How is it Calculated?</div>
+          <p>A fixed amount per person based on the value of staple food (wheat, dates, barley), multiplied by the number of family members and the rate applicable in your country.</p>
+        </div>
+      </div>
+    </div><!-- /.info-card -->
+
+    <footer>
+      Made with <span>♥</span> for the Muslim Ummah &nbsp;·&nbsp; Ramadan Mubarak 🌙
+    </footer>
+
+  </div><!-- /.page-wrapper -->
+
+
+  <script>
+    /* ── Original calculation logic (unchanged) ─────── */
+    const fitrahRates = {
+      "Pakistan":     { amount: 400,   currency: "PKR" },
+      "USA":          { amount: 10,    currency: "USD" },
+      "UK":           { amount: 6,     currency: "GBP" },
+      "Canada":       { amount: 12,    currency: "CAD" },
+      "Australia":    { amount: 13,    currency: "AUD" },
+      "UAE":          { amount: 25,    currency: "AED" },
+      "Saudi Arabia": { amount: 25,    currency: "SAR" },
+      "Kuwait":       { amount: 1.5,   currency: "KWD" },
+      "Qatar":        { amount: 15,    currency: "QAR" },
+      "Bahrain":      { amount: 1.5,   currency: "BHD" },
+      "Oman":         { amount: 1.5,   currency: "OMR" },
+      "Egypt":        { amount: 45,    currency: "EGP" },
+      "Jordan":       { amount: 1.8,   currency: "JOD" },
+      "France":       { amount: 8,     currency: "EUR" },
+      "Germany":      { amount: 10,    currency: "EUR" },
+      "Turkey":       { amount: 220,   currency: "TRY" },
+      "Indonesia":    { amount: 50000, currency: "IDR" },
+      "India":        { amount: 125,   currency: "INR" },
+      "Bangladesh":   { amount: 100,   currency: "BDT" },
+      "Morocco":      { amount: 23,    currency: "MAD" },
+      "Tunisia":      { amount: 2,     currency: "TND" },
+      "Sudan":        { amount: 3000,  currency: "SDG" }
+    };
+
+    document.getElementById('calculate').addEventListener('click', function () {
+      let numMembers = Number(document.getElementById('members').value);
+      let country    = document.getElementById('countrySelect').value;
+      let errorMsg   = document.getElementById('errorMsg');
+      let outputBox  = document.getElementById('output');
+
+      /* validation */
+      if (!numMembers || !country) {
+        errorMsg.classList.add('visible');
+        outputBox.classList.remove('visible');
+        return;
+      }
+
+      errorMsg.classList.remove('visible');
+
+      let fitrahInfo  = fitrahRates[country];
+      let totalFitrah = numMembers * fitrahInfo.amount;
+
+      /* UI-only: populate the result card */
+      document.getElementById('res-members').textContent = numMembers;
+      document.getElementById('res-amount').textContent  =
+        totalFitrah.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
+      document.getElementById('res-currency').textContent = fitrahInfo.currency + ' total';
+
+      /* Show result */
+      outputBox.classList.remove('visible');           /* reset for re-animation */
+      void outputBox.offsetWidth;                      /* reflow */
+      outputBox.classList.add('visible');
+    });
+
+    /* ── Info accordion (replaces readmore button) ─── */
+    document.getElementById('infoToggle').addEventListener('click', function () {
+      document.getElementById('infoCard').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
