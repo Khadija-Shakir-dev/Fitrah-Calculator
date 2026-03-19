@@ -10,27 +10,25 @@
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-    /* ── Tokens ─────────────────────────────────────── */
     :root {
-      --cream:    #faf6ef;
-      --cream-2:  #f3ece0;
-      --sand:     #e8dcc8;
-      --gold:     #c9973a;
-      --gold-lt:  #e8b95a;
-      --teal:     #2d6a60;
-      --teal-lt:  #3d8a7e;
+      --cream:     #faf6ef;
+      --cream-2:   #f3ece0;
+      --sand:      #e8dcc8;
+      --gold:      #c9973a;
+      --gold-lt:   #e8b95a;
+      --teal:      #2d6a60;
+      --teal-lt:   #3d8a7e;
       --teal-dim: #1e4d45;
-      --text:     #2c2416;
-      --text-2:   #6b5c42;
-      --text-3:   #9e8c72;
-      --white:    #ffffff;
-      --error:    #c0392b;
-      --shadow:   0 8px 40px rgba(44,36,22,0.13), 0 2px 8px rgba(44,36,22,0.07);
-      --radius:   20px;
+      --text:      #2c2416;
+      --text-2:    #6b5c42;
+      --text-3:    #9e8c72;
+      --white:     #ffffff;
+      --error:     #c0392b;
+      --shadow:    0 8px 40px rgba(44,36,22,0.13), 0 2px 8px rgba(44,36,22,0.07);
+      --radius:    20px;
       --transition: 0.28s cubic-bezier(.4,0,.2,1);
     }
 
-    /* ── Base ───────────────────────────────────────── */
     html { scroll-behavior: smooth; }
 
     body {
@@ -48,7 +46,6 @@
       color: var(--text);
     }
 
-    /* ── Geometric pattern strip ────────────────────── */
     body::before {
       content: '';
       position: fixed;
@@ -60,7 +57,6 @@
       z-index: 0;
     }
 
-    /* ── Page wrapper ───────────────────────────────── */
     .page-wrapper {
       position: relative;
       z-index: 1;
@@ -74,7 +70,6 @@
       to   { opacity: 1; transform: translateY(0); }
     }
 
-    /* ── Header badge ───────────────────────────────── */
     .header-badge {
       display: flex;
       align-items: center;
@@ -103,7 +98,6 @@
       color: var(--teal);
     }
 
-    /* ── Card ───────────────────────────────────────── */
     .card {
       background: var(--white);
       border-radius: var(--radius);
@@ -112,7 +106,6 @@
       animation: fadeUp .7s .2s ease both;
     }
 
-    /* Card top band */
     .card-band {
       background: linear-gradient(135deg, var(--teal-dim) 0%, var(--teal) 55%, var(--teal-lt) 100%);
       padding: 32px 36px 28px;
@@ -174,10 +167,8 @@
       position: relative;
     }
 
-    /* Card body */
     .card-body { padding: 32px 36px 36px; }
 
-    /* ── Form Fields ─────────────────────────────────── */
     .field { margin-bottom: 20px; }
 
     label {
@@ -244,7 +235,6 @@
       box-shadow: 0 0 0 3.5px rgba(45,106,96,.12);
     }
 
-    /* Custom select caret */
     .select-wrap::after {
       content: '';
       position: absolute;
@@ -258,7 +248,6 @@
       pointer-events: none;
     }
 
-    /* ── Error message ───────────────────────────────── */
     .error-msg {
       display: none;
       align-items: center;
@@ -292,7 +281,6 @@
       60%      { transform: translateX(5px); }
     }
 
-    /* ── Button ──────────────────────────────────────── */
     #calculate {
       width: 100%;
       padding: 15px;
@@ -338,7 +326,6 @@
       outline-offset: 3px;
     }
 
-    /* ── Result box ──────────────────────────────────── */
     .result-box {
       display: none;
       margin-top: 22px;
@@ -449,7 +436,6 @@
       display: inline-block;
     }
 
-    /* ── Info section ────────────────────────────────── */
     .info-card {
       background: var(--white);
       border-radius: var(--radius);
@@ -563,7 +549,6 @@
 
     .info-block ul li { margin-bottom: 4px; }
 
-    /* ── Footer ──────────────────────────────────────── */
     footer {
       margin-top: 28px;
       text-align: center;
@@ -574,7 +559,6 @@
 
     footer span { color: var(--gold); }
 
-    /* ── Responsive ──────────────────────────────────── */
     @media (max-width: 480px) {
       body { padding: 24px 12px 48px; }
       .card-band { padding: 26px 22px 22px; }
@@ -589,10 +573,8 @@
 <body>
   <div class="page-wrapper">
 
-    <!-- Header badge -->
     <div class="header-badge">
       <div class="badge-icon">
-        <!-- Crescent moon SVG -->
         <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
           <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z"/>
         </svg>
@@ -600,7 +582,6 @@
       <span class="badge-text">Ramadan 1446 AH</span>
     </div>
 
-    <!-- Main calculator card -->
     <div class="card">
       <div class="card-band">
         <div class="hijri-chip">
@@ -615,7 +596,6 @@
 
       <div class="card-body">
 
-        <!-- Country select -->
         <div class="field">
           <label for="countrySelect">Country</label>
           <div class="input-wrap select-wrap">
@@ -623,8 +603,8 @@
               <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="2" y1="12" x2="22" y2="12"/><path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
             </span>
             <select name="country" id="countrySelect">
-              <option value="Pakistan">🇵🇰 Pakistan</option>
               <option value="USA">🇺🇸 USA</option>
+              <option value="Pakistan">🇵🇰 Pakistan</option>
               <option value="UK">🇬🇧 UK</option>
               <option value="Canada">🇨🇦 Canada</option>
               <option value="Australia">🇦🇺 Australia</option>
@@ -649,7 +629,6 @@
           </div>
         </div>
 
-        <!-- Members input -->
         <div class="field">
           <label for="members">Number of Family Members</label>
           <div class="input-wrap">
@@ -660,19 +639,16 @@
           </div>
         </div>
 
-        <!-- Error message -->
         <div class="error-msg" id="errorMsg">
           <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Please select a country and enter the number of family members.
         </div>
 
-        <!-- Calculate button -->
         <button id="calculate">
           <svg viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><line x1="8" y1="6" x2="16" y2="6"/><line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="12" y2="14"/></svg>
           Calculate Fitrah
         </button>
 
-        <!-- Result display -->
         <div class="result-box" id="output">
           <div class="result-label">Your Fitrah Due</div>
           <div class="result-row">
@@ -692,10 +668,9 @@
           </div>
         </div>
 
-      </div><!-- /.card-body -->
-    </div><!-- /.card -->
+      </div>
+    </div>
 
-    <!-- Info accordion card -->
     <div class="info-card" id="infoCard">
       <div class="info-header" id="infoToggle">
         <div class="info-header-left">
@@ -735,17 +710,16 @@
           <p>A fixed amount per person based on the value of staple food (wheat, dates, barley), multiplied by the number of family members and the rate applicable in your country.</p>
         </div>
       </div>
-    </div><!-- /.info-card -->
+    </div>
 
     <footer>
       Made with <span>♥</span> for the Muslim Ummah &nbsp;·&nbsp; Ramadan Mubarak 🌙
     </footer>
 
-  </div><!-- /.page-wrapper -->
+  </div>
 
 
   <script>
-    /* ── Original calculation logic (unchanged) ─────── */
     const fitrahRates = {
       "Pakistan":     { amount: 400,   currency: "PKR" },
       "USA":          { amount: 10,    currency: "USD" },
@@ -777,7 +751,6 @@
       let errorMsg   = document.getElementById('errorMsg');
       let outputBox  = document.getElementById('output');
 
-      /* validation */
       if (!numMembers || !country) {
         errorMsg.classList.add('visible');
         outputBox.classList.remove('visible');
@@ -789,19 +762,16 @@
       let fitrahInfo  = fitrahRates[country];
       let totalFitrah = numMembers * fitrahInfo.amount;
 
-      /* UI-only: populate the result card */
       document.getElementById('res-members').textContent = numMembers;
       document.getElementById('res-amount').textContent  =
         totalFitrah.toLocaleString(undefined, { minimumFractionDigits: 0, maximumFractionDigits: 2 });
       document.getElementById('res-currency').textContent = fitrahInfo.currency + ' total';
 
-      /* Show result */
-      outputBox.classList.remove('visible');           /* reset for re-animation */
-      void outputBox.offsetWidth;                      /* reflow */
+      outputBox.classList.remove('visible');           
+      void outputBox.offsetWidth;                      
       outputBox.classList.add('visible');
     });
 
-    /* ── Info accordion (replaces readmore button) ─── */
     document.getElementById('infoToggle').addEventListener('click', function () {
       document.getElementById('infoCard').classList.toggle('open');
     });
